@@ -1,8 +1,10 @@
 // Modules
+const apiai = require('apiai')
 const Discord  = require('discord.js');
 const express = require('express');
 const http = require('http');
 const fs = require('fs');
+const uuid = require('uuid')
 require('dotenv').config();
 // Data
 const { prefix } = require('./assets/config.json');
@@ -26,18 +28,36 @@ app.listen(process.env.PORT);
 var state = {
     commands: new Discord.Collection()
 }
-
-const cmd_files = fs.readdirSync('./src/commands').filter(file => file.endsWith('.js'));
+console.log(__dirname)
+const cmd_files = fs.readdirSync(__dirname + '\\commands').filter(file => file.endsWith('.js'));
 for (var file of cmd_files) {
-    var cmd = require(`./src/commands/${file}`);
+    var cmd = require(__dirname + `\\commands/${file}`);
     state.commands.set(cmd.name, cmd)
 }
 
 const client = new Discord.Client();
+const chatApp = apiai(process.env.APIAI)
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`)
     client.user.setPresence({ status: 'online', game: {name: "the kids", type: 3} })
+})
+
+client.on('message', message => {
+    if(message.isMentioned(client.user)) {
+        const session_id = uuid.v4();
+        var request = chatApp.textRequest(message.content, {
+            sessionId: session_id
+        });
+        request.on('response', function(response) {
+            message.reply(response.result.fulfillment.speech)
+        })
+
+        request.on('error', (error) => {
+            console.log(error)
+        })
+        request.end()
+    }
 })
 
 client.login(token);
