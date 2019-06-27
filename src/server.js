@@ -44,9 +44,16 @@ client.on('ready', () => {
 })
 
 client.on('message', message => {
+    // Chatbot component
     if(message.isMentioned(client.user)) {
+        var msg = message.content
+        // If you try to get her to chirp her own name
+        if (message.content.toLowerCase().includes('karen')) {
+            msg = msg.toLowerCase().replace('karen', '')
+        }
+        
         const session_id = uuid.v4();
-        var request = chatApp.textRequest(message.content, {
+        var request = chatApp.textRequest(msg, {
             sessionId: session_id
         });
         request.on('response', function(response) {
@@ -55,8 +62,23 @@ client.on('message', message => {
 
         request.on('error', (error) => {
             console.log(error)
+            message.reply('Fuck off, can\'t be assed to think atm')
         })
         request.end()
+        return;
+    }
+
+    if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) { return };
+
+    // Getting the command following the prefix
+    const args = message.content.slice(prefix.length + 1).split(/ +/);
+    const cmd = args.shift().toLowerCase();
+
+    try {
+        state.commands.get(cmd).execute(message, args, state)
+    } catch(error) {
+        console.error(error);
+        message.reply(`I don't know what that means, try \`${prefix} help\``)
     }
 })
 
