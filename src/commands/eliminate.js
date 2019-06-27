@@ -20,7 +20,7 @@ module.exports = {
 
             const avatar = await loadImage(member.user.displayAvatarURL);
             ctx.drawImage(avatar, 0, 0, canvas.width, canvas.height);
-            ctx.rotate(0.610865)
+
             const wasted = await loadImage(__dirname + '\\..\\assets\\img\\wasted.png');
             ctx.drawImage(wasted, 0, 0.35 * canvas.height, canvas.width, 0.5 * canvas.height);
     
