@@ -9,9 +9,8 @@ module.exports = {
         var width, height;
         var member = msg.mentions.members.first();
         
-        img = new Image();
+        var img = new Image();
         img.onload = async function() {
-            console.log("Loaded img")
             width = img.naturalWidth,
             height = img.naturalHeight
 
@@ -37,7 +36,7 @@ module.exports = {
 
             ctx.putImageData(id, 0, 0)
 
-            const wasted = await loadImage(__dirname + '\\..\\assets\\img\\wasted.png');
+            const wasted = await loadImage(__dirname + '/../assets/img/wasted.png');
             ctx.drawImage(wasted, 0, 0.35 * canvas.height, canvas.width, 0.5 * canvas.height);
     
             const attachment = new Discord.Attachment(canvas.toBuffer(), 'welcome-image.png');
