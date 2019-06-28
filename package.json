@@ -9,6 +9,7 @@
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
     "fabric": "^3.2.0",
+    "ffmpeg": "^0.0.4",
     "fs": "^0.0.1-security",
     "http": "^0.0.0",
     "jimp": "^0.6.4",

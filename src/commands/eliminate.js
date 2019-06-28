@@ -4,7 +4,7 @@ const { createCanvas, loadImage, Image } = require('canvas')
 
 module.exports = {
     name: 'eliminate',
-    description: 'Eliminate the mentioned user',
+    description: 'Eliminate a mentioned user, GTA style',
     async execute (msg, args, state) {
         var width, height;
         var member = msg.mentions.members.first();
@@ -20,6 +20,22 @@ module.exports = {
 
             const avatar = await loadImage(member.user.displayAvatarURL);
             ctx.drawImage(avatar, 0, 0, canvas.width, canvas.height);
+
+            const id = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const data = id.data;
+            for (let i = 0; i < data.length; i+=4) {
+                let r = data[i]
+                let g = data[i + 1]
+                let b = data[i + 2]
+                let y = 0.299 * r + 0.587 * g + 0.114 * b;
+                data[i] = y
+                data[i + 1] = y;
+	            data[i + 2] = y;
+            }
+
+            ctx.putImageData(id, 0, 0)
 
             const wasted = await loadImage(__dirname + '\\..\\assets\\img\\wasted.png');
             ctx.drawImage(wasted, 0, 0.35 * canvas.height, canvas.width, 0.5 * canvas.height);
